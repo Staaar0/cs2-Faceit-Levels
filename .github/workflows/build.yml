@@ -1,0 +1,81 @@
+name: Build CSSharp FaceitLevels
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build CSSharp plugin
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore FaceitLevels.csproj
+
+      - name: Publish
+        run: dotnet publish FaceitLevels.csproj -c Release -o publish
+
+      - name: Create package zip
+        run: |
+          mkdir -p package/addons/counterstrikesharp/plugins/FaceitLevels
+
+          cp publish/FaceitLevels.dll package/addons/counterstrikesharp/plugins/FaceitLevels/FaceitLevels.dll
+
+          echo "Package files:"
+          find package -type f | sort
+
+          test -f package/addons/counterstrikesharp/plugins/FaceitLevels/FaceitLevels.dll
+          test ! -f package/addons/counterstrikesharp/configs/plugins/FaceitLevels/FaceitLevels.json
+
+          cd package
+          zip -r ../CS2FaceitLevels-CSSharp.zip addons
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CS2FaceitLevels-CSSharp
+          path: CS2FaceitLevels-CSSharp.zip
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="cssharp-build-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}"
+
+          cat > release-notes.md <<EOF_NOTES
+          Automated CSSharp build for CS2FaceitLevels.
+
+          File:
+          - CS2FaceitLevels-CSSharp.zip
+
+          Notes:
+          - Release zip contains only the plugin DLL install path.
+          - The config auto-generates on server at addons/counterstrikesharp/configs/plugins/FaceitLevels/FaceitLevels.json.
+          - A default config template is kept in the repo at configs/FaceitLevels/FaceitLevels.json.
+          - Requires CounterStrikeSharp installed on the server.
+          - Still requires the CS2FaceitLevels workshop addon through MultiAddonManager for the FACEIT images.
+
+          GitHub also provides:
+          - Source code (zip)
+          - Source code (tar.gz)
+          EOF_NOTES
+
+          gh release create "$TAG" \
+            CS2FaceitLevels-CSSharp.zip \
+            --title "CS2FaceitLevels CSSharp Build #${GITHUB_RUN_NUMBER}" \
+            --notes-file release-notes.md \
+            --target "$GITHUB_SHA"
