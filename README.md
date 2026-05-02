@@ -9,10 +9,11 @@ The plugin does this:
 3. Writes the mapped pin ID to the scoreboard pin slot.
 4. workshop addon replaces those pin images with FACEIT level images.
 
-## Dependencies
+## Requirements
 
 - [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp)
 - [MultiAddonManager](https://github.com/Source2ZE/MultiAddonManager)
+- [Faceit API Key](https://developers.faceit.com/apps)
 - [this workshop addon](https://steamcommunity.com/sharedfiles/filedetails/?id=3718321446) [addon ID: 3718321446]
 
 ## Install on server
