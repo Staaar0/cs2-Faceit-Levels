@@ -11,7 +11,7 @@ The plugin does this:
 
 ## Dependencies
 
-- [CounterStrikeSharp]([https://www.sourcemm.net/downloads.php?branch=dev](https://github.com/roflmuffin/CounterStrikeSharp))
+- [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp)
 - [MultiAddonManager](https://github.com/Source2ZE/MultiAddonManager)
 - [this workshop addon](https://steamcommunity.com/sharedfiles/filedetails/?id=3718321446) [addon ID: 3718321446]
 
@@ -22,7 +22,7 @@ Copy the `addons` folder into your CS2 server `game/csgo/` folder:
 Edit this file and add your FACEIT API key:
 
 ```text
-counterstrikesharp/configs/CS2FaceitLevels/CS2FaceitLevels.json
+counterstrikesharp/configs/plugins/CS2FaceitLevels/CS2FaceitLevels.json.
 ```
 
 ## MultiAddonManager Setup
