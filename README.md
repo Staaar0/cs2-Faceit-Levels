@@ -8,6 +8,10 @@ The plugin does this:
 2. Requests the player's FACEIT CS2 skill level from the FACEIT Data API.
 3. Writes the mapped pin ID to the scoreboard pin slot.
 4. workshop addon replaces those pin images with FACEIT level images.
+- 
+![](imgs/addon-needed.png)
+-
+![](imgs/scoreboard.png)
 
 ## Requirements
 
