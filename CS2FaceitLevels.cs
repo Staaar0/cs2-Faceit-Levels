@@ -16,10 +16,14 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
 {
     public override string ModuleName => "CS2FaceitLevels";
     public override string ModuleAuthor => "✪ Stαr";
-    public override string ModuleVersion => "1.0.0";
+    public override string ModuleVersion => "1.0.2";
     public override string ModuleDescription => "Shows real FACEIT levels in the CS2 scoreboard.";
 
     private static readonly HttpClient Http = new();
+
+    private const int ChallengerBadgeLevel = 11;
+    private const int ChallengerRankLimit = 1000;
+    private const int ChallengerPinId = 1010;
 
     private readonly ConcurrentDictionary<ulong, CachedFaceitLevel> _cache = new();
     private readonly ConcurrentDictionary<ulong, byte> _fetching = new();
@@ -40,6 +44,7 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
         [8] = 1082,
         [9] = 1035,
         [10] = 1060,
+        [ChallengerBadgeLevel] = ChallengerPinId,
     };
 
     public void OnConfigParsed(CS2FaceitLevelsConfig config)
@@ -162,7 +167,7 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
             if (!IsUsablePlayer(player))
                 continue;
 
-            if (_cache.TryGetValue(player.SteamID, out var cached) && cached.Level is >= 1 and <= 10)
+            if (_cache.TryGetValue(player.SteamID, out var cached) && cached.Level is >= 1 and <= ChallengerBadgeLevel)
             {
                 ApplyFaceitLevel(player, cached.Level.Value);
             }
@@ -183,7 +188,7 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
         {
             if (cached.ExpiresAt > DateTimeOffset.UtcNow)
             {
-                if (cached.Level is >= 1 and <= 10)
+                if (cached.Level is >= 1 and <= ChallengerBadgeLevel)
                     ApplyFaceitLevel(player, cached.Level.Value);
                 else if (Config.ClearPinWhenNoFaceit)
                     ClearPin(player);
@@ -222,7 +227,7 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
                 if (currentPlayer == null || !IsUsablePlayer(currentPlayer) || currentPlayer.SteamID != steamId)
                     return;
 
-                if (level is >= 1 and <= 10)
+                if (level is >= 1 and <= ChallengerBadgeLevel)
                 {
                     ApplyFaceitLevel(currentPlayer, level.Value);
                 }
@@ -281,10 +286,134 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
         if (!skillLevelElement.TryGetInt32(out var level))
             return null;
 
-        return level is >= 1 and <= 10 ? level : null;
+        if (level is < 1 or > 10)
+            return null;
+
+        if (level != 10)
+            return level;
+
+        if (!json.RootElement.TryGetProperty("player_id", out var playerIdElement))
+            return level;
+
+        var playerId = playerIdElement.GetString();
+        if (string.IsNullOrWhiteSpace(playerId))
+            return level;
+
+        string? region = null;
+        if (cs2.TryGetProperty("region", out var regionElement))
+            region = regionElement.GetString();
+
+        if (string.IsNullOrWhiteSpace(region))
+        {
+            if (Config.Debug)
+                Logger.LogInformation("[CS2FaceitLevels] FACEIT level 10 player {SteamId} has no CS2 region in API response.", steamId);
+            return level;
+        }
+
+        var isChallenger = await IsFaceitChallengerAsync(playerId, region);
+        return isChallenger ? ChallengerBadgeLevel : level;
     }
 
-    private void ApplyFaceitLevel(CCSPlayerController player, int level)
+    private async Task<bool> IsFaceitChallengerAsync(string playerId, string region)
+    {
+        try
+        {
+            var safeRegion = Uri.EscapeDataString(region);
+            var safePlayerId = Uri.EscapeDataString(playerId);
+
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"https://open.faceit.com/data/v4/rankings/games/cs2/regions/{safeRegion}/players/{safePlayerId}");
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Config.FaceitApiKey);
+            request.Headers.UserAgent.ParseAdd("CS2FaceitLevels-CSSharp/1.0");
+
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(Config.RequestTimeoutSeconds));
+            using var response = await Http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if (Config.Debug)
+                    Logger.LogInformation("[CS2FaceitLevels] FACEIT ranking API returned {StatusCode} for player {PlayerId} in region {Region}.", (int)response.StatusCode, playerId, region);
+                return false;
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync(cts.Token);
+            using var json = await JsonDocument.ParseAsync(stream, cancellationToken: cts.Token);
+
+            if (!TryReadRankingPosition(json.RootElement, out var position))
+                return false;
+
+            var isChallenger = position is > 0 and <= ChallengerRankLimit;
+
+            if (Config.Debug)
+            {
+                Logger.LogInformation("[CS2FaceitLevels] FACEIT ranking for player {PlayerId} in region {Region}: {Position}. Challenger={IsChallenger}.", playerId, region, position, isChallenger);
+            }
+
+            return isChallenger;
+        }
+        catch (Exception ex)
+        {
+            if (Config.Debug)
+                Logger.LogWarning(ex, "[CS2FaceitLevels] FACEIT challenger lookup failed for player {PlayerId} in region {Region}.", playerId, region);
+            return false;
+        }
+    }
+
+    private static bool TryReadRankingPosition(JsonElement element, out int position)
+    {
+        position = 0;
+
+        if (element.ValueKind != JsonValueKind.Object)
+            return false;
+
+        if (TryGetPositiveIntProperty(element, "position", out position))
+            return true;
+
+        if (TryGetPositiveIntProperty(element, "rank", out position))
+            return true;
+
+        if (TryGetPositiveIntProperty(element, "ranking", out position))
+            return true;
+
+        if (element.TryGetProperty("items", out var items) && items.ValueKind == JsonValueKind.Array && items.GetArrayLength() > 0)
+        {
+            var first = items[0];
+
+            if (TryGetPositiveIntProperty(first, "position", out position))
+                return true;
+
+            if (TryGetPositiveIntProperty(first, "rank", out position))
+                return true;
+
+            if (TryGetPositiveIntProperty(first, "ranking", out position))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryGetPositiveIntProperty(JsonElement element, string propertyName, out int value)
+    {
+        value = 0;
+
+        if (element.ValueKind != JsonValueKind.Object)
+            return false;
+
+        if (!element.TryGetProperty(propertyName, out var property))
+            return false;
+
+        if (property.ValueKind == JsonValueKind.Number && property.TryGetInt32(out value))
+            return value > 0;
+
+        if (property.ValueKind == JsonValueKind.String && int.TryParse(property.GetString(), out value))
+            return value > 0;
+
+        return false;
+    }
+
+    private void ApplyFaceitLevel    private void ApplyFaceitLevel(CCSPlayerController player, int level)
     {
         if (!IsUsablePlayer(player))
             return;
@@ -301,7 +430,7 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
 
         if (Config.Debug)
         {
-            Logger.LogInformation("[CS2FaceitLevels] Applied FACEIT level {Level} pin {PinId} to {PlayerName}.", level, pinId, player.PlayerName);
+            Logger.LogInformation("[CS2FaceitLevels] Applied FACEIT badge level {Level} pin {PinId} to {PlayerName}.", level, pinId, player.PlayerName);
         }
     }
 
