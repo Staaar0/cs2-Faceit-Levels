@@ -2,6 +2,8 @@
 
 CS2 plugin that shows a player's real FACEIT level in the CS2 scoreboard.
 
+From 1 to challanger badge
+
 The plugin does this:
 
 1. Reads the player's SteamID64 after authorization.
