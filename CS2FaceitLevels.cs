@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -153,14 +154,14 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
 
         if (command.ArgCount < 2)
         {
-            caller!.PrintToChat(ReplaceChatColorTags(Config.MissingPlayerNameMessage));
+            caller.PrintToChat(ReplaceChatColorTags(Config.MissingPlayerNameMessage));
             return;
         }
 
         var search = GetJoinedArguments(command, 1);
         if (string.IsNullOrWhiteSpace(search))
         {
-            caller!.PrintToChat(ReplaceChatColorTags(Config.MissingPlayerNameMessage));
+            caller.PrintToChat(ReplaceChatColorTags(Config.MissingPlayerNameMessage));
             return;
         }
 
@@ -172,19 +173,19 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
 
         if (matches.Count == 0)
         {
-            caller!.PrintToChat(ReplaceChatColorTags(Config.NoPlayerFoundMessage.Replace("{SEARCH}", search, StringComparison.OrdinalIgnoreCase)));
+            caller.PrintToChat(ReplaceChatColorTags(Config.NoPlayerFoundMessage.Replace("{SEARCH}", search, StringComparison.OrdinalIgnoreCase)));
             return;
         }
 
         if (matches.Count > 1)
         {
             var names = string.Join(", ", matches.Take(5).Select(p => p.PlayerName));
-            caller!.PrintToChat(ReplaceChatColorTags(Config.MultiplePlayersFoundMessage.Replace("{PLAYERS}", names, StringComparison.OrdinalIgnoreCase)));
+            caller.PrintToChat(ReplaceChatColorTags(Config.MultiplePlayersFoundMessage.Replace("{PLAYERS}", names, StringComparison.OrdinalIgnoreCase)));
             return;
         }
 
         var target = PlayerSnapshot.From(matches[0]);
-        var callerSlot = caller!.Slot;
+        var callerSlot = caller.Slot;
 
         _ = Task.Run(async () =>
         {
@@ -195,7 +196,7 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
                 if (!IsUsablePlayer(currentCaller))
                     return;
 
-                currentCaller!.PrintToChat(RenderEloChatLine(Config.SingleEloChatFormat, target, data));
+                currentCaller.PrintToChat(RenderEloChatLine(Config.SingleEloChatFormat, target, data));
             });
         });
     }
@@ -215,7 +216,7 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
             .Select(PlayerSnapshot.From)
             .ToList();
 
-        var callerSlot = caller!.Slot;
+        var callerSlot = caller.Slot;
 
         _ = Task.Run(async () =>
         {
@@ -230,7 +231,7 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
 
                 foreach (var result in results)
                 {
-                    currentCaller!.PrintToChat(RenderEloChatLine(Config.AllElosChatFormat, result.Player, result.Data));
+                    currentCaller.PrintToChat(RenderEloChatLine(Config.AllElosChatFormat, result.Player, result.Data));
                 }
             });
         });
@@ -652,9 +653,9 @@ public sealed class CS2FaceitLevels : BasePlugin, IPluginConfig<CS2FaceitLevelsC
         Utilities.SetStateChanged(player, "CCSPlayerController", "m_pInventoryServices");
     }
 
-    private static bool IsUsablePlayer(CCSPlayerController player)
+    private static bool IsUsablePlayer([NotNullWhen(true)] CCSPlayerController? player)
     {
-        return player.IsValid && !player.IsBot && player.Connected == PlayerConnectedState.Connected && player.SteamID != 0;
+        return player != null && player.IsValid && !player.IsBot && player.Connected == PlayerConnectedState.Connected && player.SteamID != 0;
     }
 
     private sealed record CachedFaceitData(int? Level, int? SkillLevel, int? Elo, DateTimeOffset ExpiresAt);
