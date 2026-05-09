@@ -22,6 +22,18 @@ The plugin does this:
 - [Faceit API Key](https://developers.faceit.com/apps)
 - [this workshop addon](https://steamcommunity.com/sharedfiles/filedetails/?id=3719547820) [addon ID: 3719547820]
 
+## ELO Chat Commands
+
+Players can privately check FACEIT ELO using chat commands.
+
+### Commands
+
+| Command | Description |
+|---|---|
+| `!elo <playername>` | Shows the selected player’s FACEIT ELO |
+| `!elos` | Shows all connected players’ FACEIT ELO |
+
+
 ## Install on server
 
 Copy the `addons` folder into your CS2 server `game/csgo/` folder:
