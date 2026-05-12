@@ -10,17 +10,13 @@ The plugin does this:
 2. Requests the player's FACEIT CS2 skill level from the FACEIT Data API.
 3. Writes the mapped pin ID to the scoreboard pin slot.
 4. workshop addon replaces those pin images with FACEIT level images.
-- 
-![](imgs/addon-needed.png)
--
-![](imgs/scoreboard.png)
 
 ## Requirements
 
 - [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp)
 - [MultiAddonManager](https://github.com/Source2ZE/MultiAddonManager)
 - [Faceit API Key](https://developers.faceit.com/apps)
-- [this workshop addon](https://steamcommunity.com/sharedfiles/filedetails/?id=3719547820) [addon ID: 3719547820]
+- [this workshop addon](https://steamcommunity.com/sharedfiles/filedetails/?id=3724637448) [addon ID: 3724637448]
 
 ## ELO Chat Commands
 
@@ -46,18 +42,18 @@ counterstrikesharp/configs/plugins/CS2FaceitLevels/CS2FaceitLevels.json.
 
 ## MultiAddonManager Setup
 
-- you will need this addon ID [3718321446] if you want the plugin to work
+- you will need this addon ID [3724637448] if you want the plugin to work
 - MultiAddonManager config path: game\csgo\cfg\multiaddonmanager
 
 ```
-mm_extra_addons 				"3719547820"
-mm_client_extra_addons			"3719547820"
+mm_extra_addons 				"3724637448"
+mm_client_extra_addons			"3724637448"
 ```
 
 - if you want to add multiple addons in MultiAddonManager
 ```
-mm_extra_addons 				"3719547820,3719909906"
-mm_client_extra_addons			"3719547820,3719909906"
+mm_extra_addons 				"3724637448,3719909906"
+mm_client_extra_addons			"3724637448,3719909906"
 ```
 ## notice
 - about the workshop map you do not need to Subscribe manually MultiAddonManager will do everything for you
