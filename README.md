@@ -59,3 +59,8 @@ mm_client_extra_addons			"3724637448,3719909906"
 - about the workshop map you do not need to Subscribe manually MultiAddonManager will do everything for you
 - for better experience i highly recommended Disabling any plugin that change coins/pins. 
 - CS2FaceitLevels plugin will override them but it will take 15sec to reapply FaceitLevles :)
+
+
+## Search keywords:
+
+cs2 faceit, faceit, faceit plugin, cs2 faceit plugin, cs2-faceit-levels, cs2faceitlevels, faceit levels, faceit-levels, faceit level, faceit level plugin, faceit rank, faceit ranks, faceit rank plugin, faceit elo, faceit elo plugin, faceit scoreboard, faceit scoreboard plugin, cs2 faceit levels, cs2 faceit level, cs2 faceit ranks, cs2 faceit rank, cs2 faceit elo, cs2 faceit scoreboard, cs2 faceit level plugin, cs2 faceit rank plugin, cs2 faceit elo plugin, cs2 faceit scoreboard plugin, real faceit level plugin, real faceit ranks, show faceit level, show faceit levels, show faceit rank, show faceit ranks, show faceit elo, show faceit on scoreboard, show faceit level on scoreboard, show faceit rank on scoreboard, counterstrikesharp faceit, counter strike sharp faceit, counterstrikesharp faceit levels, counterstrikesharp faceit plugin, cssharp faceit, css faceit levels, cs sharp faceit levels, cs2 cssharp faceit, cs2 counterstrikesharp faceit,
