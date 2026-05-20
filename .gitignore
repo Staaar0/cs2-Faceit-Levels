@@ -1,7 +1,0 @@
-bin/
-obj/
-publish/
-package/
-*.zip
-.vs/
-.vscode/
