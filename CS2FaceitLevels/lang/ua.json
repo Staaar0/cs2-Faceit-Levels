@@ -1,0 +1,8 @@
+{
+  "chat_prefix": "[{RED}CS2FaceitLevels{DEFAULT}]",
+  "single_elo_chat_format": "- {PLAYER_COLOR}{PLAYER}{DEFAULT} {LABEL_COLOR}Elo{DEFAULT}: {ELO_COLOR}{ELO}{DEFAULT}",
+  "all_elos_chat_format": "- {PLAYER_COLOR}{PLAYER}{DEFAULT} {LABEL_COLOR}Elo{DEFAULT}: {ELO_COLOR}{ELO}{DEFAULT}",
+  "missing_player_name_message": "{PREFIX} Вкажіть ім'я гравця {RED}< !elo {Ім'я гравця} >",
+  "no_player_found_message": "{PREFIX} Гравця не знайдено за запитом {RED}{SEARCH}",
+  "multiple_players_found_message": "{PREFIX} Знайдено кілька гравців: {RED}{PLAYERS}"
+}

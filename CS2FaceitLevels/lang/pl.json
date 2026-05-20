@@ -1,0 +1,8 @@
+{
+  "chat_prefix": "[{RED}CS2FaceitLevels{DEFAULT}]",
+  "single_elo_chat_format": "- {PLAYER_COLOR}{PLAYER}{DEFAULT} {LABEL_COLOR}Elo{DEFAULT}: {ELO_COLOR}{ELO}{DEFAULT}",
+  "all_elos_chat_format": "- {PLAYER_COLOR}{PLAYER}{DEFAULT} {LABEL_COLOR}Elo{DEFAULT}: {ELO_COLOR}{ELO}{DEFAULT}",
+  "missing_player_name_message": "{PREFIX} Podaj nazwę gracza {RED}< !elo {Nazwa gracza} >",
+  "no_player_found_message": "{PREFIX} Nie znaleziono gracza pasującego do {RED}{SEARCH}",
+  "multiple_players_found_message": "{PREFIX} Znaleziono wielu graczy: {RED}{PLAYERS}"
+}

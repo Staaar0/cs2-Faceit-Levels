@@ -1,0 +1,11 @@
+{
+  "faceit_api_key": "PUT_YOUR_FACEIT_API_KEY_HERE",
+  "language": "en", //ar, en, lv, pl, pt-BR, pt-PT, ru, tr, ua, zh-ch
+  "debug": false,
+  "cache_minutes": 30,
+  "request_timeout_seconds": 10,
+  "reapply_cached_pin_seconds": 15,
+  "clear_pin_when_no_faceit": false,
+  "enable_elo_commands": true,
+  "ConfigVersion": 1
+}

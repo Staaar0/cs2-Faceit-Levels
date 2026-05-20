@@ -1,0 +1,50 @@
+name: Build CS2FaceitLevels
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build and Release
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore CS2FaceitLevels/CS2FaceitLevels.csproj
+
+      - name: Build
+        run: dotnet build CS2FaceitLevels/CS2FaceitLevels.csproj -c Release --no-restore
+
+      - name: Create package
+        run: |
+          mkdir -p package/addons/counterstrikesharp/plugins/CS2FaceitLevels
+
+          cp CS2FaceitLevels/bin/Release/net8.0/CS2FaceitLevels.dll package/addons/counterstrikesharp/plugins/CS2FaceitLevels/
+
+          if [ -d CS2FaceitLevels/bin/Release/net8.0/lang ]; then
+            cp -r CS2FaceitLevels/bin/Release/net8.0/lang package/addons/counterstrikesharp/plugins/CS2FaceitLevels/
+          fi
+
+          cd package
+          zip -r ../CS2FaceitLevels.zip addons
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="build-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}"
+
+          gh release create "$TAG"             CS2FaceitLevels.zip             --title "CS2FaceitLevels Build #${GITHUB_RUN_NUMBER}"             --notes ""

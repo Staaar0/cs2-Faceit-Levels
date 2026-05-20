@@ -1,0 +1,8 @@
+{
+  "chat_prefix": "[{RED}CS2FaceitLevels{DEFAULT}]",
+  "single_elo_chat_format": "- {PLAYER_COLOR}{PLAYER}{DEFAULT} {LABEL_COLOR}Elo{DEFAULT}: {ELO_COLOR}{ELO}{DEFAULT}",
+  "all_elos_chat_format": "- {PLAYER_COLOR}{PLAYER}{DEFAULT} {LABEL_COLOR}Elo{DEFAULT}: {ELO_COLOR}{ELO}{DEFAULT}",
+  "missing_player_name_message": "{PREFIX} 请输入玩家名称 {RED}< !elo {玩家名称} >",
+  "no_player_found_message": "{PREFIX} 找不到匹配 {RED}{SEARCH}{DEFAULT} 的玩家",
+  "multiple_players_found_message": "{PREFIX} 找到多个玩家: {RED}{PLAYERS}"
+}
