@@ -66,8 +66,8 @@ mm_client_extra_addons			"3724637448"
 
 - if you want to add multiple addons in MultiAddonManager
 ```
-mm_extra_addons 				"3724637448,3719909906"
-mm_client_extra_addons			"3724637448,3719909906"
+mm_extra_addons 				"3724637448,3732307395"
+mm_client_extra_addons			"3724637448,3732307395"
 ```
 ## notice
 - about the workshop map you do not need to Subscribe manually MultiAddonManager will do everything for you
