@@ -1,4 +1,4 @@
-# CS2FaceitLevels
+# CS2FaceitLevels 
 
 CS2 plugin that shows a player's real FACEIT level in the CS2 scoreboard.
 
