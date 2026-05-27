@@ -15,7 +15,7 @@ The plugin does this:
 
 - [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp)
 - [MultiAddonManager](https://github.com/Source2ZE/MultiAddonManager)
-- [Faceit API Key](https://developers.faceit.com/apps)
+- [Faceit API Key](https://developers.faceit.com/)
 - [this workshop addon](https://steamcommunity.com/sharedfiles/filedetails/?id=3724637448) [addon ID: 3724637448]
 
 ## ELO Chat Commands
